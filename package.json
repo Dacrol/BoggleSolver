@@ -1,0 +1,12 @@
+{
+  "name": "NodebiteChallengeSolution",
+  "version": "0.0.0",
+  "main": "solver.js",
+  "repository": "https://github.com/Dacrol/NodebiteChallengeSolution.git",
+  "author": "Dacrol <jonas.ahrens@gmail.com>",
+  "license": "UNLICENSED",
+  "private": true,
+  "devDependencies": {
+    "@types/node": "^10.5.2"
+  }
+}
