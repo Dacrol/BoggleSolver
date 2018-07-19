@@ -9,7 +9,7 @@ class Timer {
 
   nodeEnd() {
     let elapsed = process.hrtime(this.timer)
-    return elapsed
+    return round3(elapsed[0] * 1000 + elapsed[1] / 1000000) // Convert to ms, hrtime returns full seconds in [0] and nanoseconds in [1]
   }
 
   browserStart() {
@@ -18,8 +18,12 @@ class Timer {
 
   browserEnd() {
     let elapsed = window.performance.now() - this.startTime
-    return elapsed
+    return round3(elapsed)
   }
+}
+
+function round3 (number) {
+  return Math.round(number*1000) / 1000 // Add something like 0.00001 after multiplication if floating point errors is an issue
 }
 
 module.exports = Timer
