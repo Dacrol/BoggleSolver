@@ -1,4 +1,4 @@
-class Timer {
+class Stopwatch {
   constructor() {
     this.start = (typeof process !== 'undefined' && process.hrtime) ? this.nodeStart : (typeof window !== 'undefined' && window.performance) ? this.browserStart : () => {}
     this.end = (typeof process !== 'undefined' && process.hrtime) ? this.nodeEnd : (typeof window !== 'undefined' && window.performance) ? this.browserEnd : () => {}
@@ -26,4 +26,4 @@ function round3 (number) {
   return Math.round(number*1000) / 1000 // Add something like 0.00001 after multiplication if floating point errors is an issue
 }
 
-module.exports = Timer
+module.exports = Stopwatch
