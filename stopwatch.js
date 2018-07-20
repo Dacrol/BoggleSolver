@@ -24,6 +24,26 @@ class Stopwatch {
   log() {
     console.log(this.end() + ' ms')
   }
+
+  get test() {
+    return Stopwatch.test
+  }
+
+  static async test(callback, loops, {preparation = undefined, silent = false, label = ''} = {}) {
+    const preparedData = typeof preparation === 'function' ? preparation() : preparation
+    const sw = new Stopwatch()
+    sw.start()
+    for (let index = 0; index < loops; index++) {
+      await callback(index, preparedData)
+    }
+    let total = sw.end()
+    // @ts-ignore
+    let average = total / loops
+    if (!silent) {
+      console.log((label ? ('\x1b[36m' + label + ': \x1b[0m') : '') + 'Average: ' + average + ' ms, total: ' + total + ' ms')
+    }
+    return [total, average]
+  }
 }
 
 function round3 (number) {
