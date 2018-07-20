@@ -8,6 +8,12 @@ readMatrix('piggy.txt')
     console.error(error)
   })
   .then(result => console.log(result))
+// Returns a new wordlist with only the words that contain the given letters
+function filterWordlist(wordlist, contains) {
+  const regex = new RegExp('\\b[' + contains + ']+\\b', 'g')
+  console.log(regex)
+  return wordlist.filter((word) => regex.test(word))
+}
 
 async function readAndSplitWordlist(filename = './wordlist.txt') {
   const wordlist = (await loadFile(filename).catch(() => {
