@@ -1,15 +1,56 @@
 const fs = require('fs')
-
+const Stopwatch = require('./stopwatch')
 ;(async () => {
   let wordlist = await readAndSplitWordlist()
   let challenge = await readMatrix('piggy.txt')
   let graph = createGraph(challenge.matrix)
-  let uniqueChars = [...new Set(graph.map((node) => node.char))].join('')
-  wordlist = filterWordlist(wordlist, uniqueChars) 
-  console.log(wordlist)
+  let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
+  wordlist = filterWordlist(wordlist, uniqueChars)
+  const startNode =
+    graph[
+      challenge.startPosition[0] * challenge.matrix[0].length +
+        challenge.startPosition[1]
+    ]
+  console.log(findWordFrom(startNode, wordlist))
 })().catch(error => {
   console.error(error)
 })
+
+function findWordFrom(startNode, wordlist, forbiddenNodes = []) {
+  let currentNode = startNode
+  let currentWord = currentNode.char
+  let path = []
+  const step = function*(nextEdge = 0) {
+    if (nextEdge === currentNode.edges.length) return
+    let nextNode = currentNode.edges[nextEdge]
+    if (!forbiddenNodes.includes(nextNode)) var deepen = yield nextNode
+    yield* step(
+      deepen
+        ? (path.push(currentNode), (currentNode = nextNode), 0)
+        : nextEdge + 1
+    )
+  }
+  const stepper = step()
+  let deepen = false
+  for (let index = 0; index < 100; index++) {
+    let nextStep = stepper.next(deepen)
+    console.log(nextStep, currentWord)
+    if (nextStep.done) break
+    deepen = false
+    forbiddenNodes.push(nextStep.value)
+    let char = nextStep.value.char
+    let filteredWordlist = wordlist.filter(word =>
+      word.startsWith(currentWord + char)
+    )
+    console.table(filteredWordlist)
+    console.log(currentWord)
+    if (filteredWordlist.length > 0) {
+      currentWord += char
+      deepen = true
+    }
+  }
+  return [path, currentNode, currentWord]
+}
 
 function createGraph(matrix) {
   const [yDim, xDim] = [matrix.length, matrix[0].length]
@@ -42,8 +83,7 @@ function createGraph(matrix) {
 // Returns a new wordlist with only the words that contain the given letters
 function filterWordlist(wordlist, contains) {
   const regex = new RegExp('\\b[' + contains + ']+\\b', 'g')
-  console.log(regex)
-  return wordlist.filter((word) => regex.test(word))
+  return wordlist.filter(word => regex.test(word))
 }
 
 async function readAndSplitWordlist(filename = './wordlist.txt') {
