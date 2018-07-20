@@ -1,13 +1,34 @@
 const fs = require('fs')
 
-readAndSplitWordlist().catch(error => {
-  console.error(error)
-})
-readMatrix('piggy.txt')
-  .catch(error => {
-    console.error(error)
+
+function createGraph(matrix) {
+  const [yDim, xDim] = [matrix.length, matrix[0].length]
+  let nodes = matrix.reduce(
+    (acc, line) =>
+      acc.concat(
+        line.map(char => {
+          return { char: char, edges: [] }
+        })
+      ),
+    []
+  )
+  nodes.forEach((node, index, nodes) => {
+    if (index >= xDim) {
+      node.edges.push(nodes[index - xDim])
+    }
+    if ((index + 1) % xDim !== 0) {
+      node.edges.push(nodes[index + 1])
+    }
+    if (index < xDim * (yDim - 1)) {
+      node.edges.push(nodes[index + xDim])
+    }
+    if (index % xDim !== 0) {
+      node.edges.push(nodes[index - 1])
+    }
   })
-  .then(result => console.log(result))
+  return nodes
+}
+
 // Returns a new wordlist with only the words that contain the given letters
 function filterWordlist(wordlist, contains) {
   const regex = new RegExp('\\b[' + contains + ']+\\b', 'g')
