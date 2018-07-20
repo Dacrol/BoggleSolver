@@ -1,5 +1,15 @@
 const fs = require('fs')
 
+;(async () => {
+  let wordlist = await readAndSplitWordlist()
+  let challenge = await readMatrix('piggy.txt')
+  let graph = createGraph(challenge.matrix)
+  let uniqueChars = [...new Set(graph.map((node) => node.char))].join('')
+  wordlist = filterWordlist(wordlist, uniqueChars) 
+  console.log(wordlist)
+})().catch(error => {
+  console.error(error)
+})
 
 function createGraph(matrix) {
   const [yDim, xDim] = [matrix.length, matrix[0].length]
