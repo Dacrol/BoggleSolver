@@ -20,6 +20,10 @@ class Stopwatch {
     let elapsed = window.performance.now() - this.startTime
     return round3(elapsed)
   }
+
+  log() {
+    console.log(this.end() + ' ms')
+  }
 }
 
 function round3 (number) {
