@@ -11,22 +11,25 @@ const Stopwatch = require('./stopwatch')
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  console.log(findWordFrom(startNode, wordlist))
+  var results = findWordFrom(startNode, wordlist, [startNode], true)
+  console.log('\n\nWord found: ', results)
+  var results = findWordFrom(results[0], wordlist, results[1])
+  console.log('\n\nWord found: ', results)
 })().catch(error => {
   console.error(error)
 })
 
-function findWordFrom(startNode, wordlist, forbiddenNodes = []) {
+function findWordFrom(startNode, wordlist, forbiddenNodes = [startNode], firstRun = false) {
   let currentNode = startNode
-  let currentWord = currentNode.char
-  let path = []
+  let currentWord = firstRun ? currentNode.char : ''
+  let path = firstRun ? [currentNode] : []
   const step = function*(nextEdge = 0) {
     if (nextEdge === currentNode.edges.length) return
     let nextNode = currentNode.edges[nextEdge]
     if (!forbiddenNodes.includes(nextNode)) var deepen = yield nextNode
     yield* step(
       deepen
-        ? (path.push(currentNode), (currentNode = nextNode), 0)
+        ? (currentNode = nextNode, 0)
         : nextEdge + 1
     )
   }
@@ -42,14 +45,15 @@ function findWordFrom(startNode, wordlist, forbiddenNodes = []) {
     let filteredWordlist = wordlist.filter(word =>
       word.startsWith(currentWord + char)
     )
-    console.table(filteredWordlist)
-    console.log(currentWord)
+    // console.log(filteredWordlist.length)
+    // console.log(currentWord)
     if (filteredWordlist.length > 0) {
+      path.push(nextStep.value)
       currentWord += char
       deepen = true
     }
   }
-  return [path, currentNode, currentWord]
+  return [currentNode, path, currentWord]
 }
 
 function createGraph(matrix) {
