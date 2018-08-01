@@ -41,7 +41,7 @@ class Stopwatch {
 
   static async test(
     callback,
-    loops,
+    loops = 1,
     { preparation = undefined, silent = false, label = '' } = {}
   ) {
     const preparedData =
