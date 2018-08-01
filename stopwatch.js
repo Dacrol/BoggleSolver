@@ -66,6 +66,14 @@ class Stopwatch {
     }
     return [total, average]
   }
+
+  static decorate(fn) {
+    return (...args) => {
+      Stopwatch.test(() => {
+        fn(...args)
+      })
+    }
+  }
 }
 
 function round3(number) {
