@@ -71,11 +71,19 @@ class Stopwatch {
     return [total, average]
   }
 
-  static decorate(fn) {
+  static decorate(fn, label) {
     return (...args) => {
-      Stopwatch.test(() => {
-        fn(...args)
-      })
+      const sw = new Stopwatch()
+      sw.start()
+      const result = fn(...args)
+      const time = sw.end()
+      console.log(
+        (label ? '\x1b[36m' + label + ': \x1b[0m' : '') +
+          'Execution time: ' +
+          time +
+          ' ms'
+      )
+      return result
     }
   }
 }

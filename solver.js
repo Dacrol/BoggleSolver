@@ -11,9 +11,7 @@ const Stopwatch = require('./stopwatch')
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  var results = findWordFrom(startNode, wordlist, [startNode], true)
-  console.log('\n\nWord found: ', results)
-  var results = findWordFrom(results[0], wordlist, results[1])
+  var results = Stopwatch.decorate(findWordFrom)(startNode, wordlist, [startNode], true)
   console.log('\n\nWord found: ', results)
 })().catch(error => {
   console.error(error)
