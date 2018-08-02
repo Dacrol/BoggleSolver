@@ -39,6 +39,10 @@ class Stopwatch {
     return Stopwatch.test
   }
 
+  get stop() {
+    return this.end
+  }
+
   static async test(
     callback,
     loops = 1,
