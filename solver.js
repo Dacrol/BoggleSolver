@@ -11,11 +11,16 @@ const Stopwatch = require('./stopwatch')
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
-  console.log('\n\nWord found: ', results)
+  // var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
+  // console.log('\n\nWord found: ', results)
+  console.log(findWordsFrom(startNode, wordlist))
 })().catch(error => {
   console.error(error)
 })
+
+function findWordsFrom(startNode, wordlist, {forbiddenNodes = [startNode], includeFirst = false} = {}) {
+  
+}
 
 function findWordFrom(startNode, wordlist, forbiddenNodes = [startNode], firstRun = false) {
   let currentNode = startNode
