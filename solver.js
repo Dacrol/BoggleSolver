@@ -18,11 +18,18 @@ const Stopwatch = require('./stopwatch')
   console.error(error)
 })
 
-function findWordsFrom(startNode, wordlist, {forbiddenNodes = [startNode], includeFirst = false} = {}) {
-  
-}
+function findWordsFrom(
+  startNode,
+  wordlist,
+  { forbiddenNodes = [startNode], includeFirst = false } = {}
+) {}
 
-function findWordFrom(startNode, wordlist, forbiddenNodes = [startNode], firstRun = false) {
+function findWordFrom(
+  startNode,
+  wordlist,
+  forbiddenNodes = [startNode],
+  firstRun = false
+) {
   let currentNode = startNode
   let currentWord = firstRun ? currentNode.char : ''
   let path = firstRun ? [currentNode] : []
@@ -30,11 +37,7 @@ function findWordFrom(startNode, wordlist, forbiddenNodes = [startNode], firstRu
     if (nextEdge === currentNode.edges.length) return
     let nextNode = currentNode.edges[nextEdge]
     if (!forbiddenNodes.includes(nextNode)) var deepen = yield nextNode
-    yield* step(
-      deepen
-        ? (currentNode = nextNode, 0)
-        : nextEdge + 1
-    )
+    yield* step(deepen ? ((currentNode = nextNode), 0) : nextEdge + 1)
   }
   const stepper = step()
   let deepen = false
