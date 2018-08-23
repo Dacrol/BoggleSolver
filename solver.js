@@ -2,7 +2,7 @@ const fs = require('fs')
 const Stopwatch = require('./stopwatch')
 ;(async () => {
   let wordlist = await readAndSplitWordlist()
-  let challenge = await readMatrix('piggy.txt')
+  let challenge = await readMatrix('line.txt')
   let graph = createGraph(challenge.matrix)
   let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
   wordlist = initialFilterWordlist(wordlist, uniqueChars)
@@ -21,8 +21,18 @@ const Stopwatch = require('./stopwatch')
 function findWordsFrom(
   startNode,
   wordlist,
-  { forbiddenNodes = [startNode], includeFirst = false } = {}
-) {}
+  { forbiddenNodes = [startNode], currentWord = startNode.char, foundWords = [] } = {}
+) {
+  const filteredWordlist = wordlist.filter(word =>
+    word.startsWith(currentWord)
+  )
+  // console.trace(wordlist.includes(currentWord))
+  console.log(currentWord)
+  if (wordlist.includes(currentWord)) foundWords.push(currentWord)
+  if (filteredWordlist.length <= 1) return foundWords
+  startNode.edges.filter((edge) => !forbiddenNodes.includes(edge)).map((edge) => findWordsFrom(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
+  return foundWords
+}
 
 function findWordFrom(
   startNode,
