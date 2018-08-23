@@ -5,7 +5,7 @@ const Stopwatch = require('./stopwatch')
   let challenge = await readMatrix('piggy.txt')
   let graph = createGraph(challenge.matrix)
   let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
-  wordlist = filterWordlist(wordlist, uniqueChars)
+  wordlist = initialFilterWordlist(wordlist, uniqueChars)
   const startNode =
     graph[
       challenge.startPosition[0] * challenge.matrix[0].length +
@@ -91,7 +91,7 @@ function createGraph(matrix) {
 }
 
 // Returns a new wordlist with only the words that contain the given letters
-function filterWordlist(wordlist, contains) {
+function initialFilterWordlist(wordlist, contains) {
   const regex = new RegExp('\\b[' + contains + ']+\\b', 'g')
   return wordlist.filter(word => regex.test(word))
 }
