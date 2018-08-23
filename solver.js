@@ -26,12 +26,14 @@ function recursiveBreadthFirstSearch(
   const filteredWordlist = wordlist.filter(word =>
     word.startsWith(currentWord)
   )
-  // console.trace(wordlist.includes(currentWord))
-  console.log(currentWord)
-  if (wordlist.includes(currentWord)) foundWords.push(currentWord)
+  if (wordlist.includes(currentWord)) foundWords.push({word: currentWord, path: forbiddenNodes, nextNodes: getAllowedEdges(startNode, forbiddenNodes)})
   if (filteredWordlist.length <= 1) return foundWords
-  startNode.edges.filter((edge) => !forbiddenNodes.includes(edge)).map((edge) => recursiveBreadthFirstSearch(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
+  getAllowedEdges(startNode, forbiddenNodes).map((edge) => recursiveBreadthFirstSearch(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
   return foundWords
+}
+
+function getAllowedEdges(node, forbiddenNodes) {
+  return node.edges.filter((edge) => !forbiddenNodes.includes(edge))
 }
 
 function findWordFrom(
