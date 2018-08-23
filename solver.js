@@ -13,12 +13,12 @@ const Stopwatch = require('./stopwatch')
     ]
   // var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
   // console.log('\n\nWord found: ', results)
-  console.log(findWordsFrom(startNode, wordlist))
+  console.log(Stopwatch.decorate(recursiveBreadthFirstSearch)(startNode, wordlist))
 })().catch(error => {
   console.error(error)
 })
 
-function findWordsFrom(
+function recursiveBreadthFirstSearch(
   startNode,
   wordlist,
   { forbiddenNodes = [startNode], currentWord = startNode.char, foundWords = [] } = {}
@@ -30,7 +30,7 @@ function findWordsFrom(
   console.log(currentWord)
   if (wordlist.includes(currentWord)) foundWords.push(currentWord)
   if (filteredWordlist.length <= 1) return foundWords
-  startNode.edges.filter((edge) => !forbiddenNodes.includes(edge)).map((edge) => findWordsFrom(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
+  startNode.edges.filter((edge) => !forbiddenNodes.includes(edge)).map((edge) => recursiveBreadthFirstSearch(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
   return foundWords
 }
 
