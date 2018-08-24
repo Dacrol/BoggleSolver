@@ -2,22 +2,46 @@ const fs = require('fs')
 const Stopwatch = require('./stopwatch')
 ;(async () => {
   let wordlist = await readAndSplitWordlist()
-  let challenge = await readMatrix('piggy.txt')
+  let challenge = await readMatrix('line.txt')
   let graph = createGraph(challenge.matrix)
   let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
-  wordlist = filterWordlist(wordlist, uniqueChars)
+  wordlist = initialFilterWordlist(wordlist, uniqueChars)
   const startNode =
     graph[
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
-  console.log('\n\nWord found: ', results)
+  // var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
+  // console.log('\n\nWord found: ', results)
+  console.log(Stopwatch.decorate(recursiveBreadthFirstSearch)(startNode, wordlist))
 })().catch(error => {
   console.error(error)
 })
 
-function findWordFrom(startNode, wordlist, forbiddenNodes = [startNode], firstRun = false) {
+function recursiveBreadthFirstSearch(
+  startNode,
+  wordlist,
+  { forbiddenNodes = [startNode], currentWord = startNode.char, foundWords = [] } = {}
+) {
+  const filteredWordlist = wordlist.filter(word =>
+    word.startsWith(currentWord)
+  )
+  if (wordlist.includes(currentWord)) foundWords.push({word: currentWord, path: forbiddenNodes, nextNodes: getAllowedEdges(startNode, forbiddenNodes)})
+  if (filteredWordlist.length <= 1) return foundWords
+  getAllowedEdges(startNode, forbiddenNodes).forEach((edge) => recursiveBreadthFirstSearch(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
+  return foundWords
+}
+
+function getAllowedEdges(node, forbiddenNodes) {
+  return node.edges.filter((edge) => !forbiddenNodes.includes(edge))
+}
+
+function findWordFrom(
+  startNode,
+  wordlist,
+  forbiddenNodes = [startNode],
+  firstRun = false
+) {
   let currentNode = startNode
   let currentWord = firstRun ? currentNode.char : ''
   let path = firstRun ? [currentNode] : []
@@ -25,11 +49,7 @@ function findWordFrom(startNode, wordlist, forbiddenNodes = [startNode], firstRu
     if (nextEdge === currentNode.edges.length) return
     let nextNode = currentNode.edges[nextEdge]
     if (!forbiddenNodes.includes(nextNode)) var deepen = yield nextNode
-    yield* step(
-      deepen
-        ? (currentNode = nextNode, 0)
-        : nextEdge + 1
-    )
+    yield* step(deepen ? ((currentNode = nextNode), 0) : nextEdge + 1)
   }
   const stepper = step()
   let deepen = false
@@ -83,7 +103,7 @@ function createGraph(matrix) {
 }
 
 // Returns a new wordlist with only the words that contain the given letters
-function filterWordlist(wordlist, contains) {
+function initialFilterWordlist(wordlist, contains) {
   const regex = new RegExp('\\b[' + contains + ']+\\b', 'g')
   return wordlist.filter(word => regex.test(word))
 }
