@@ -28,7 +28,7 @@ function recursiveBreadthFirstSearch(
   )
   if (wordlist.includes(currentWord)) foundWords.push({word: currentWord, path: forbiddenNodes, nextNodes: getAllowedEdges(startNode, forbiddenNodes)})
   if (filteredWordlist.length <= 1) return foundWords
-  getAllowedEdges(startNode, forbiddenNodes).map((edge) => recursiveBreadthFirstSearch(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
+  getAllowedEdges(startNode, forbiddenNodes).forEach((edge) => recursiveBreadthFirstSearch(edge, filteredWordlist, {forbiddenNodes: [...forbiddenNodes, edge], currentWord: currentWord + edge.char, foundWords: foundWords}))
   return foundWords
 }
 
