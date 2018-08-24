@@ -13,18 +13,23 @@ const Stopwatch = require('./stopwatch')
     ]
   // var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
   // console.log('\n\nWord found: ', results)
+  
   let results = Stopwatch.decorate(recursiveWordSearch)(startNode, wordlist, graph.length)
+  // let results = Stopwatch.decorate(recursiveBreadthFirstSearch)(startNode, wordlist)
   console.log(results)
 })().catch(error => {
   console.error(error)
 })
 
-function recursiveWordSearch(startNode, wordlist, targetSize, {forbiddenNodes = []} = {}) {
-  const words = recursiveBreadthFirstSearch(startNode, wordlist, {forbiddenNodes: forbiddenNodes.length > 0 ? forbiddenNodes : undefined})
-  // console.log(words)
-  // words.forEach(word => console.log((forbiddenNodes.map(node => node.char).join('') + word.word).length))
-  if (words.some(word => (forbiddenNodes.map(node => node.char).join('') + word.word).length === targetSize)) return words
-  return words.map((word) => word.nextNodes.map((node) => recursiveWordSearch(node, wordlist, targetSize, {forbiddenNodes: [...forbiddenNodes, ...word.path]})))
+var count = 0
+
+function recursiveWordSearch(startNode, wordlist, targetSize, {forbiddenNodes = [], previousWords = []} = {}) {
+  count++
+  const words = recursiveBreadthFirstSearch(startNode, wordlist, {forbiddenNodes: forbiddenNodes.length > 0 ? forbiddenNodes.slice() : undefined})
+  if (words.filter((word) => word.nextNodes.length === 0))
+  {let result = words.find(word => (word.nextNodes.length === 0 && (word.word + previousWords.join('')).length === targetSize))
+  if (result) console.log(previousWords.join(' ') + ' ' + result.word, count)}
+  words.map((word) => word.nextNodes.map(node => recursiveWordSearch(node, wordlist, targetSize, {forbiddenNodes: [...word.path, node], previousWords: [...previousWords, word.word]})))
 }
 
 function recursiveBreadthFirstSearch(
