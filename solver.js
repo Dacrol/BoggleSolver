@@ -113,7 +113,7 @@ function createGraph(matrix) {
 
 // Returns a new wordlist with only the words that contain the given letters
 function initialFilterWordlist(wordlist, contains) {
-  const regex = new RegExp('\\b[' + contains + ']+\\b', 'g')
+  const regex = new RegExp('\\b[' + contains + ']+\\b')
   return wordlist.filter(word => regex.test(word))
 }
 
