@@ -14,7 +14,7 @@ const Stopwatch = require('./stopwatch')
   // var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
   // console.log('\n\nWord found: ', results)
 
-  let results = Stopwatch.decorate(recursiveWordSearch)(
+  let results = Stopwatch.decorate(recursiveWordTraversal)(
     startNode,
     wordlist,
     graph.length
@@ -27,7 +27,7 @@ const Stopwatch = require('./stopwatch')
 
 var count = 0
 
-function recursiveWordSearch(
+function recursiveWordTraversal(
   startNode,
   wordlist,
   targetSize,
@@ -48,7 +48,7 @@ function recursiveWordSearch(
   }
   words.map(word =>
     word.nextNodes.map(node =>
-      recursiveWordSearch(node, wordlist, targetSize, {
+      recursiveWordTraversal(node, wordlist, targetSize, {
         forbiddenNodes: [...word.path, node],
         previousWords: [...previousWords, word.word]
       })
