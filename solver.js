@@ -2,7 +2,7 @@ const fs = require('fs')
 const Stopwatch = require('./stopwatch')
 ;(async () => {
   let wordlist = await readAndSplitWordlist()
-  let challenge = await readMatrix('piggy.txt')
+  let challenge = await readMatrix('line.txt')
   let graph = createGraph(challenge.matrix)
   let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
   wordlist = initialFilterWordlist(wordlist, uniqueChars)
@@ -20,6 +20,27 @@ const Stopwatch = require('./stopwatch')
 })().catch(error => {
   console.error(error)
 })
+
+module.exports = solver
+
+async function solver(filename, callback) {
+  let wordlist = await readAndSplitWordlist()
+  let challenge = await readMatrix(filename)
+  let graph = createGraph(challenge.matrix)
+  let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
+  wordlist = initialFilterWordlist(wordlist, uniqueChars)
+  const startNode =
+    graph[
+      challenge.startPosition[0] * challenge.matrix[0].length +
+        challenge.startPosition[1]
+    ]
+  let results = recursiveWordTraversal(
+    startNode,
+    wordlist,
+    graph.length
+  )
+  callback(results, 0)
+}
 
 function recursiveWordTraversal(
   startNode,
