@@ -1,45 +1,28 @@
 const fs = require('fs')
 const Stopwatch = require('./stopwatch')
-;(async () => {
-  let wordlist = await readAndSplitWordlist()
-  let challenge = await readMatrix('line.txt')
-  let graph = createGraph(challenge.matrix)
-  let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
-  wordlist = initialFilterWordlist(wordlist, uniqueChars)
-  const startNode =
-    graph[
-      challenge.startPosition[0] * challenge.matrix[0].length +
-        challenge.startPosition[1]
-    ]
-  let results = Stopwatch.decorate(recursiveWordTraversal)(
-    startNode,
-    wordlist,
-    graph.length
-  )
-  console.log(results)
-})().catch(error => {
-  console.error(error)
-})
 
 module.exports = solver
 
 async function solver(filename, callback) {
+  const stopwatch = new Stopwatch()
+  stopwatch.start()
   let wordlist = await readAndSplitWordlist()
-  let challenge = await readMatrix(filename)
-  let graph = createGraph(challenge.matrix)
-  let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
+  const challenge = await readMatrix(filename)
+  const graph = createGraph(challenge.matrix)
+  const uniqueChars = [...new Set(graph.map(node => node.char))].join('')
   wordlist = initialFilterWordlist(wordlist, uniqueChars)
   const startNode =
     graph[
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  let results = recursiveWordTraversal(
+  const results = recursiveWordTraversal(
     startNode,
     wordlist,
     graph.length
   )
-  callback(results, 0)
+  const time = stopwatch.end()
+  callback(results, time)
 }
 
 function recursiveWordTraversal(
