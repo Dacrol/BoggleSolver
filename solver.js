@@ -21,38 +21,49 @@ const Stopwatch = require('./stopwatch')
   )
   // let results = Stopwatch.decorate(recursiveBreadthFirstSearch)(startNode, wordlist)
   console.log(results)
+
+  // Stopwatch.test(
+  //   () => {
+  //     recursiveWordTraversal(startNode, wordlist, graph.length)
+  //   },
+  //   { label: 1, loops: 500 }
+  // )
+
 })().catch(error => {
   console.error(error)
 })
 
 var count = 0
-
 function recursiveWordTraversal(
   startNode,
   wordlist,
   targetSize,
   { forbiddenNodes = [], previousWords = [] } = {}
 ) {
-  count++
+  count++ // 52
   const words = recursiveBreadthFirstSearch(startNode, wordlist, {
     forbiddenNodes:
       forbiddenNodes.length > 0 ? forbiddenNodes.slice() : undefined
   })
-  if (words.filter(word => word.nextNodes.length === 0)) {
-    let result = words.find(
-      word =>
-        word.nextNodes.length === 0 &&
-        (word.word + previousWords.join('')).length === targetSize
-    )
-    if (result) console.log(previousWords.join(' ') + ' ' + result.word, count)
-  }
-  words.map(word =>
-    word.nextNodes.map(node =>
-      recursiveWordTraversal(node, wordlist, targetSize, {
+
+  let result = checkForSolution(words, targetSize)
+  if (result) return previousWords.join(' ') + ' ' + result.word
+  for (const word of words) {
+    for (const node of word.nextNodes) {
+      result = recursiveWordTraversal(node, wordlist, targetSize, {
         forbiddenNodes: [...word.path, node],
         previousWords: [...previousWords, word.word]
       })
-    )
+      if (result) break
+    }
+    if (result) break
+  }
+  return result
+}
+
+function checkForSolution(words, targetSize) {
+  return words.find(
+    word => word.nextNodes.length === 0 && word.path.length === targetSize
   )
 }
 
