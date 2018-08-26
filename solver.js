@@ -2,7 +2,7 @@ const fs = require('fs')
 const Stopwatch = require('./stopwatch')
 ;(async () => {
   let wordlist = await readAndSplitWordlist()
-  let challenge = await readMatrix('line.txt')
+  let challenge = await readMatrix('piggy.txt')
   let graph = createGraph(challenge.matrix)
   let uniqueChars = [...new Set(graph.map(node => node.char))].join('')
   wordlist = initialFilterWordlist(wordlist, uniqueChars)
@@ -59,13 +59,14 @@ function recursiveBreadthFirstSearch(
   } = {}
 ) {
   const filteredWordlist = wordlist.filter(word => word.startsWith(currentWord))
-  if (wordlist.includes(currentWord))
+  if (filteredWordlist.length === 0) return foundWords
+  if (wordlist.includes(currentWord)) {
     foundWords.push({
       word: currentWord,
       path: forbiddenNodes,
       nextNodes: getAllowedEdges(startNode, forbiddenNodes)
     })
-  if (filteredWordlist.length <= 1) return foundWords
+  }
   getAllowedEdges(startNode, forbiddenNodes).forEach(edge =>
     recursiveBreadthFirstSearch(edge, filteredWordlist, {
       forbiddenNodes: [...forbiddenNodes, edge],
