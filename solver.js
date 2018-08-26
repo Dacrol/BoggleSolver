@@ -16,13 +16,9 @@ async function solver(filename, callback) {
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  const results = recursiveWordTraversal(
-    startNode,
-    wordlist,
-    graph.length
-  )
+  const results = recursiveWordTraversal(startNode, wordlist, graph.length)
   const time = stopwatch.end()
-  callback(results, time)
+  return callback(results, time)
 }
 
 function recursiveWordTraversal(

@@ -1,2 +1,9 @@
 const solver = require('./solver')
-solver('piggy.txt', (results, time) => {console.log(results, time)})
+;(async () => {
+  await solver('piggy.txt', (results, time) => {
+    console.log(results, time)
+  })
+  await solver('line.txt', (results, time) => {
+    console.log(results, time)
+  })
+})()
