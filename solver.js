@@ -31,7 +31,8 @@ function recursiveWordTraversal(
     forbiddenNodes:
       forbiddenNodes.length > 0 ? forbiddenNodes.slice() : undefined
   })
-  let result = words.find( // Check for solution
+  // Check for solution
+  let result = words.find(
     word => word.nextNodes.length === 0 && word.path.length === targetSize
   )
   if (result) return previousWords.join(' ') + ' ' + result.word
@@ -79,6 +80,7 @@ function getAllowedEdges(node, forbiddenNodes) {
   return node.edges.filter(edge => !forbiddenNodes.includes(edge))
 }
 
+/* Converts a matrix into a graph of neighboring nodes */
 function createGraph(matrix) {
   const [yDim, xDim] = [matrix.length, matrix[0].length]
   let nodes = matrix.reduce(
@@ -107,7 +109,7 @@ function createGraph(matrix) {
   return nodes
 }
 
-// Returns a new wordlist with only the words that contain the given letters
+/* Returns a new wordlist with only the words that contain the given letters */
 function initialFilterWordlist(wordlist, contains) {
   const regex = new RegExp('\\b[' + contains + ']+\\b')
   return wordlist.filter(word => regex.test(word))
