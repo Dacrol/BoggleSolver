@@ -5,9 +5,9 @@ module.exports = solver
 
 async function solver(filename, callback) {
   const stopwatch = new Stopwatch()
-  stopwatch.start()
   let wordlist = await readAndSplitWordlist()
   const challenge = await readMatrix(filename)
+  stopwatch.start() // Begin solving
   const graph = createGraph(challenge.matrix)
   const uniqueChars = [...new Set(graph.map(node => node.char))].join('')
   wordlist = initialFilterWordlist(wordlist, uniqueChars)
