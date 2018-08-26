@@ -11,42 +11,29 @@ const Stopwatch = require('./stopwatch')
       challenge.startPosition[0] * challenge.matrix[0].length +
         challenge.startPosition[1]
     ]
-  // var results = Stopwatch.decorate(findWordFrom, { label: '1', queueLog: true })(startNode, wordlist, [startNode], true)
-  // console.log('\n\nWord found: ', results)
-
   let results = Stopwatch.decorate(recursiveWordTraversal)(
     startNode,
     wordlist,
     graph.length
   )
-  // let results = Stopwatch.decorate(recursiveBreadthFirstSearch)(startNode, wordlist)
   console.log(results)
-
-  // Stopwatch.test(
-  //   () => {
-  //     recursiveWordTraversal(startNode, wordlist, graph.length)
-  //   },
-  //   { label: 1, loops: 500 }
-  // )
-
 })().catch(error => {
   console.error(error)
 })
 
-var count = 0
 function recursiveWordTraversal(
   startNode,
   wordlist,
   targetSize,
   { forbiddenNodes = [], previousWords = [] } = {}
 ) {
-  count++ // 52
   const words = recursiveBreadthFirstSearch(startNode, wordlist, {
     forbiddenNodes:
       forbiddenNodes.length > 0 ? forbiddenNodes.slice() : undefined
   })
-
-  let result = checkForSolution(words, targetSize)
+  let result = words.find( // Check for solution
+    word => word.nextNodes.length === 0 && word.path.length === targetSize
+  )
   if (result) return previousWords.join(' ') + ' ' + result.word
   for (const word of words) {
     for (const node of word.nextNodes) {
@@ -59,12 +46,6 @@ function recursiveWordTraversal(
     if (result) break
   }
   return result
-}
-
-function checkForSolution(words, targetSize) {
-  return words.find(
-    word => word.nextNodes.length === 0 && word.path.length === targetSize
-  )
 }
 
 function recursiveBreadthFirstSearch(
@@ -96,44 +77,6 @@ function recursiveBreadthFirstSearch(
 
 function getAllowedEdges(node, forbiddenNodes) {
   return node.edges.filter(edge => !forbiddenNodes.includes(edge))
-}
-
-function findWordFrom(
-  startNode,
-  wordlist,
-  forbiddenNodes = [startNode],
-  firstRun = false
-) {
-  let currentNode = startNode
-  let currentWord = firstRun ? currentNode.char : ''
-  let path = firstRun ? [currentNode] : []
-  const step = function*(nextEdge = 0) {
-    if (nextEdge === currentNode.edges.length) return
-    let nextNode = currentNode.edges[nextEdge]
-    if (!forbiddenNodes.includes(nextNode)) var deepen = yield nextNode
-    yield* step(deepen ? ((currentNode = nextNode), 0) : nextEdge + 1)
-  }
-  const stepper = step()
-  let deepen = false
-  for (let index = 0; index < 100; index++) {
-    let nextStep = stepper.next(deepen)
-    console.log(nextStep, currentWord)
-    if (nextStep.done) break
-    deepen = false
-    forbiddenNodes.push(nextStep.value)
-    let char = nextStep.value.char
-    let filteredWordlist = wordlist.filter(word =>
-      word.startsWith(currentWord + char)
-    )
-    // console.log(filteredWordlist.length)
-    // console.log(currentWord)
-    if (filteredWordlist.length > 0) {
-      path.push(nextStep.value)
-      currentWord += char
-      deepen = true
-    }
-  }
-  return [currentNode, path, currentWord]
 }
 
 function createGraph(matrix) {
